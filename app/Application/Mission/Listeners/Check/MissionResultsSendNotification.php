@@ -4,7 +4,6 @@
 namespace App\Application\Mission\Listeners\Check;
 
 
-use App\Application\Mission\Events\Check\MangaWasChecked;
 use App\Application\Mission\Events\Check\MissionCompleted;
 use App\Domain\Notification\Services\NotificationService;
 use App\Domain\Notification\TextMessage;
@@ -25,7 +24,6 @@ class MissionResultsSendNotification implements ShouldQueue
     {
         $decision = $completedMission->getDecision();
         if ($decision->shouldNotify()) {
-            //$message = $this->message->init("O manga <b>{$manga->getName()}</b> tem o novo capitulo: <b>{$decision->getNewChapter()}</b>");
             $message = $this->message->init($decision->getTextNotification());
             $this->service->send($message, $decision->getCommanderId());
         }

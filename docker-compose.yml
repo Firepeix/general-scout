@@ -1,27 +1,27 @@
 version: "3.1"
 volumes:
-  scout-database-data:
+  general-scout-database-data:
     driver: local
 services:
     webserver:
       image: nginx:alpine
-      container_name: scout-server
+      container_name: general-scout-server
       working_dir: /application
       volumes:
           - .:/application
           - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       ports:
-       - "80:80"
+       - "8080:80"
     mongo:
       image: mongo:latest
-      container_name: scout-database
+      container_name: general-scout-database
       volumes:
-        - scout-database-data:/data
+        - general-scout-database-data:/data
       ports:
-        - 27016:27017
+        - 27015:27017
     php-fpm:
       build: docker/php-fpm
-      container_name: scout-app
+      container_name: general-scout-app
       working_dir: /application
       volumes:
         - .:/application

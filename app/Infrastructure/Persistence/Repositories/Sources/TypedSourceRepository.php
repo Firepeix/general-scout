@@ -16,7 +16,7 @@ class TypedSourceRepository extends AbstractRepository implements SourceReposito
         parent::__construct($model);
     }
     
-    public function findOrFail(string $id): mixed
+    public function findOrFail(string $id): Source
     {
         return [
             MelhorRastreioSource::TYPE => fn () => new MelhorRastreioSource()

@@ -24,7 +24,7 @@ class SendNotificationCommand extends Command
     public function handle() : void
     {
         $message = $this->message->init($this->argument('message'));
-        $this->service->send($message, (int) env('CHAT_ID'));
+        $this->service->send($message, '');
     }
     
 }

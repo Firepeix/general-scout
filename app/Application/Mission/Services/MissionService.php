@@ -4,7 +4,6 @@
 namespace App\Application\Mission\Services;
 
 
-use App\Application\Mission\ChapterCheckDecision;
 use App\Application\Mission\Events\Check\BeginMission;
 use App\Application\Mission\Events\Check\MissionCompleted;
 use App\Domain\Decision\MissionDecision;
@@ -60,11 +59,11 @@ class MissionService implements MissionServiceContract
     
     public function realizeMission(Mission $mission): MissionDecision
     {
-        dd($mission);
         $source = $this->sourceRepository->findOrFail($mission->getType());
-        #TODO Adicionar logica de retornar Decisão
-        //$lastChapter = $source->getLastChapter($variation);
-        //$variation->addDecision(new ChapterCheckDecision($lastChapter, $manga->getLastReadChapter()));
-        //return $variation->getDecision()->hasNewChapter();
+        $decision = $source->scout($mission);
+        if ($decision->hasUpdate()) {
+            $this->repository->updateMission($decision);
+        }
+        return $decision;
     }
 }
