@@ -25,6 +25,7 @@ class MelhorRastreioSource extends APISource implements MissionCommanderSource
             $decision->init($mission, $update);
             return $decision;
         }catch (Exception $exception) {
+            dump($exception);
             return $decision;
         }
     }

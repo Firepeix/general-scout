@@ -16,6 +16,12 @@ abstract class AbstractDecision implements MissionDecision
     protected mixed   $update;
     protected bool    $hasUpdate;
     
+    public function __construct()
+    {
+        $this->update  = false;
+        $this->hasUpdate = false;
+    }
+    
     public function init(Mission $mission, mixed $update) : MissionDecision
     {
         $this->mission = $mission;
