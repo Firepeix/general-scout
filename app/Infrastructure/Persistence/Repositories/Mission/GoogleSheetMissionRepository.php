@@ -14,6 +14,10 @@ use Revolution\Google\Sheets\Contracts\Factory;
 
 class GoogleSheetMissionRepository extends AbstractRepository implements MissionRepositoryContract
 {
+    private const ID_POSITION = 5;
+    private const CODE_POSITION = 1;
+    private const CHAT_ID_POSITION = 12;
+    
     private Factory $sheet;
 
     public function __construct(MangaModel $model, Factory $sheet)
@@ -29,11 +33,12 @@ class GoogleSheetMissionRepository extends AbstractRepository implements Mission
     
     public function getAll(): Collection
     {
-        $mangas = $this->sheet->range('A1:M100')->get()->slice(1)->values();
+        $missions = $this->sheet->range('A1:M100')->get()->slice(1)->values();
         $offset = 2;
-        return $mangas->map(function (array $model, int $key) use ($offset){
-            $model[5] = $key + $offset;
-            return $this->map($model)->setCommanderId($model[12] ?? -529137387);
+        $chatId = $this->findChatId($missions);
+        return $missions->filter(fn (array $mission) => isset($mission[self::CODE_POSITION]))->map(function (array $model, int $key) use ($offset, $chatId){
+            $model[self::ID_POSITION] = $key + $offset;
+            return $this->map($model)->setCommanderId($chatId);
         });
     }
     
@@ -45,15 +50,19 @@ class GoogleSheetMissionRepository extends AbstractRepository implements Mission
         $this->sheet->range("C{$mission->getId()}")->update([[$update]]);
     }
     
-    public function findChatId(): ?int
+    public function findChatId(Collection $possible = null): ?int
     {
-        return -529137387;
+        if ($possible === null) {
+            $possible = $this->sheet->range('A1:M100')->get()->slice(1)->values();
+        }
+
+        return $possible[0][self::CHAT_ID_POSITION];
     }
     
     protected function map($model) : MissionContract
     {
         $manga = app(MissionContract::class);
-        $manga->init($model[5], $model[0], $model[1], $model[3], $model[2]);
+        $manga->init($model[self::ID_POSITION], $model[0], $model[self::CODE_POSITION], $model[3], $model[2]);
         return $manga;
     }
 }
