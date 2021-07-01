@@ -6,7 +6,6 @@ namespace App\Infrastructure\Sources;
 use App\Domain\Decision\MissionDecision;
 use App\Domain\Mission\Mission;
 use App\Domain\Sources\MissionCommanderSource;
-use Exception;
 use Illuminate\Support\Collection;
 
 class MelhorRastreioSource extends APISource implements MissionCommanderSource
@@ -18,16 +17,14 @@ class MelhorRastreioSource extends APISource implements MissionCommanderSource
     public function scout(Mission $mission): MissionDecision
     {
         $decision = app()->make(MissionDecision::class);
-        try {
-            $response = $this->client->get(self::URI . "/{$mission->getCode()}");
-            $response = json_decode($response->getBody()->getContents(), true);
+        $response = $this->client->get(self::URI . "/{$mission->getCode()}");
+        $response = json_decode($response->getBody()->getContents(), true);
+        if ($response['success']) {
             $update = $this->parseResponse($response);
             $decision->init($mission, $update);
             return $decision;
-        }catch (Exception $exception) {
-            dump($exception);
-            return $decision;
         }
+        return $decision;
     }
     
     private function parseResponse(array $response) : string
