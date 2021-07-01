@@ -33,7 +33,7 @@ class GoogleSheetMissionRepository extends AbstractRepository implements Mission
         $offset = 2;
         return $mangas->map(function (array $model, int $key) use ($offset){
             $model[5] = $key + $offset;
-            return $this->map($model)->setCommanderId($model[12]);
+            return $this->map($model)->setCommanderId($model[12] ?? -529137387);
         });
     }
     
